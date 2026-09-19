@@ -12,6 +12,11 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from core.config import settings
+from database.init_db import init_db
+from database.seed import seed_users
+from database.database import SessionLocal
+from models.hospital import Hospital
+
 from api.auth import router as auth_router
 from api.test_security import router as security_test_router
 from api.hospitals import router as hospitals_router
@@ -39,6 +44,32 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.on_event("startup")
+def startup_event():
+    """Automatically initialize tables and default hospital/user records on new DB startup."""
+    try:
+        init_db()
+        db = SessionLocal()
+        hospital = db.query(Hospital).filter(Hospital.id == 1).first()
+        if not hospital:
+            hospital = Hospital(
+                id=1,
+                name="General Health Medical Center",
+                code="GHMC",
+                timezone="Asia/Kolkata",
+                status="ACTIVE",
+            )
+            db.add(hospital)
+            db.commit()
+            print("Default hospital created.")
+        db.close()
+
+        seed_users()
+    except Exception as err:
+        print(f"Startup DB init log: {err}")
+
 
 app.include_router(auth_router)
 app.include_router(security_test_router)
