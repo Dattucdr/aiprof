@@ -221,11 +221,7 @@ python tests/run_safety_evaluation.py
 ## 🔐 Default Seed Credentials
 
 Upon initial database seed, default system users are created:
-- **Admin**: `admin@hospital.com` / `admin123`
-- **Clinician**: `doctor@hospital.com` / `doctor123`
-- **Auditor**: `auditor@hospital.com` / `auditor123`
-
----
+- **Campaign**: `Campaign@apollo-demo.com` / `Campaign@12345`
 
 ## 📄 License
 
