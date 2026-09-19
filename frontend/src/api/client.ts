@@ -1,10 +1,14 @@
 import axios from "axios"
+
+const apiBaseUrl = (import.meta as any).env?.VITE_API_BASE_URL || "http://localhost:8000"
+
 const apiClient = axios.create({
-  baseURL: "http://localhost:8000",
+  baseURL: apiBaseUrl,
   headers: {
     "Content-Type": "application/json",
   },
 })
+
 apiClient.interceptors.request.use((config) => {
   const token = localStorage.getItem("access_token")
   if (token) {
@@ -12,6 +16,7 @@ apiClient.interceptors.request.use((config) => {
   }
   return config
 })
+
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
@@ -22,4 +27,5 @@ apiClient.interceptors.response.use(
     return Promise.reject(error)
   }
 )
+
 export default apiClient
